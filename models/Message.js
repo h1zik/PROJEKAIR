@@ -1,4 +1,3 @@
-// models/Message.js
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/db');
 const User = require('./User');
@@ -20,6 +19,10 @@ const Message = sequelize.define('Message', {
   content: {
     type: DataTypes.TEXT,
     allowNull: false
+  },
+  adminReply: {
+    type: DataTypes.TEXT,
+    allowNull: true
   },
   timestamp: {
     type: DataTypes.DATE,

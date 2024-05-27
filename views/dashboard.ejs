@@ -1,2 +1,86 @@
-  <!-- Include Navigation Bar -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Main Dashboard</title>
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
   <%- include('./navBar') %>
+
+  <div class="container mt-5">
+    <h1>Main Dashboard</h1>
+
+    <div class="card mb-4">
+      <div class="card-header bg-primary text-white">
+        <h5 class="card-title mb-0">User Details</h5>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-6">
+            <p><strong>Username:</strong> <%= user.username %></p>
+            <p><strong>Email:</strong> <%= user.email %></p>
+          </div>
+          <div class="col-md-6">
+            <p><strong>Created At:</strong> <%= user.createdAt.toLocaleString() %></p>
+            <p><strong>Role:</strong> <%= user.role %></p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-6">
+        <div class="card mb-4">
+          <div class="card-body">
+            <h5 class="card-title">Product Catalog</h5>
+            <p class="card-text">View and manage the product catalog.</p>
+            <a href="/catalog" class="btn btn-primary">Go to Catalog</a>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="card mb-4">
+          <div class="card-body">
+            <h5 class="card-title">Subscription Management</h5>
+            <p class="card-text">View and manage user subscriptions.</p>
+            <a href="/subscriptions" class="btn btn-primary">Go to Subscriptions</a>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="card mb-4">
+          <div class="card-body">
+            <h5 class="card-title">Customer Support Chat</h5>
+            <p class="card-text">Access the customer support chat.</p>
+            <a href="/chat" class="btn btn-primary">Go to Chat</a>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="card mb-4">
+          <div class="card-body">
+            <h5 class="card-title">User Management</h5>
+            <p class="card-text">View and manage users.</p>
+            <a href="/admin/manage-users" class="btn btn-primary">Go to User Management</a>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="card mb-4">
+          <div class="card-body">
+            <h5 class="card-title">Admin Dashboard</h5>
+            <p class="card-text">Access the admin dashboard for more management features.</p>
+            <a href="/admin/dashboard" class="btn btn-primary">Go to Admin Dashboard</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

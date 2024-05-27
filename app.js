@@ -48,6 +48,11 @@ const reviewRoutes = require('./routes/review');
 
 app.use('/', authRoutes);
 
+// Public route for the homepage
+app.get('/', (req, res) => {
+  res.render('home');
+});
+
 // Apply ensureAuthenticated middleware to all protected routes
 app.use(ensureAuthenticated);
 app.use('/', protectedRoutes);
@@ -71,6 +76,16 @@ io.on('connection', socket => {
     });
 
     io.emit('chatMessage', { user: msg.user, content: msg.content, timestamp: new Date() });
+  });
+
+  // Handle admin replies
+  socket.on('adminReply', async reply => {
+    const message = await Message.findByPk(reply.messageId);
+    if (message) {
+      message.adminReply = reply.reply;
+      await message.save();
+      io.emit('adminReply', { adminReply: reply.reply, timestamp: new Date() });
+    }
   });
 
   socket.on('disconnect', () => {

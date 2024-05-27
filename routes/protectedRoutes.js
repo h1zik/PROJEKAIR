@@ -6,6 +6,18 @@ const adminController = require('../controllers/adminController');
 const chatController = require('../controllers/chatController');
 const reviewController = require('../controllers/reviewController');
 const { ensureAuthenticated, ensureAdmin } = require('../config/auth');
+const User = require('../models/User');
+
+// Main Dashboard
+router.get('/dashboard', ensureAuthenticated, async (req, res) => {
+  try {
+    const user = await User.findByPk(req.user.id);
+    res.render('dashboard', { user });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Server Error');
+  }
+});
 
 // Product routes
 router.get('/catalog', ensureAuthenticated, productController.getCatalog);

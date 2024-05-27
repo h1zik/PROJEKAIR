@@ -5,61 +5,93 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Customer Support Chat</title>
   <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-  <script src="/socket.io/socket.io.js"></script>
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const socket = io();
-      const chatForm = document.getElementById('chat-form');
-      const chatMessages = document.getElementById('chat-messages');
-      const userId = '<%= user.id %>';
-      const username = '<%= user.username %>';
-
-      // Load chat history
-      fetch('/chat/history')
-        .then(response => response.json())
-        .then(messages => {
-          messages.forEach(message => {
-            const messageElement = document.createElement('div');
-            messageElement.innerHTML = `<strong>${message.User.username}:</strong> ${message.content} <small>${new Date(message.timestamp).toLocaleTimeString()}</small>`;
-            chatMessages.appendChild(messageElement);
-          });
-        });
-
-      // Send message
-      chatForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const msg = e.target.elements.msg.value;
-
-        socket.emit('chatMessage', { userId, user: username, content: msg });
-
-        e.target.elements.msg.value = '';
-        e.target.elements.msg.focus();
-      });
-
-      // Receive message
-      socket.on('chatMessage', msg => {
-        const messageElement = document.createElement('div');
-        messageElement.innerHTML = `<strong>${msg.user}:</strong> ${msg.content} <small>${new Date(msg.timestamp).toLocaleTimeString()}</small>`;
-        chatMessages.appendChild(messageElement);
-      });
-    });
-  </script>
 </head>
 <body>
-  <!-- Include Navigation Bar -->
-  <%- include('./navBar') %>
+  <%- include ('./navBar') %>
 
   <div class="container mt-5">
-    <h1 class="mb-4">Customer Support Chat</h1>
-    <div id="chat-messages" class="border rounded p-3 mb-4" style="height: 300px; overflow-y: scroll;"></div>
+    <h1>Customer Support Chat</h1>
+    <div id="chat-container" class="mb-4">
+      <% messages.forEach(message => { %>
+        <div class="card mb-2">
+          <div class="card-body">
+            <p class="card-text"><strong>User:</strong> <%= message.content %></p>
+            <% if (message.adminReply) { %>
+              <p class="card-text text-primary"><strong>Admin:</strong> <%= message.adminReply %></p>
+            <% } %>
+            <% if (user.role === 'admin' && !message.adminReply) { %>
+              <form class="admin-reply-form">
+                <div class="form-group">
+                  <input type="hidden" name="messageId" value="<%= message.id %>">
+                  <input type="text" class="form-control" name="reply" placeholder="Enter your reply">
+                </div>
+                <button type="submit" class="btn btn-primary">Reply</button>
+              </form>
+            <% } %>
+          </div>
+        </div>
+      <% }) %>
+    </div>
     <form id="chat-form" class="form-inline">
-      <input type="text" class="form-control mr-2" name="msg" id="msg" placeholder="Enter message" required autocomplete="off">
-      <button type="submit" class="btn btn-primary">Send</button>
+      <div class="form-group mb-2">
+        <input type="text" class="form-control" id="chat-input" placeholder="Enter your message">
+      </div>
+      <button type="submit" class="btn btn-primary mb-2">Send</button>
     </form>
   </div>
 
-  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io();
+    const chatForm = document.getElementById('chat-form');
+    const chatInput = document.getElementById('chat-input');
+    const chatContainer = document.getElementById('chat-container');
+    const userId = '<%= user.id %>';
+    const username = '<%= user.username %>';
+    const role = '<%= user.role %>';
+
+    chatForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const message = chatInput.value;
+      socket.emit('chatMessage', { userId, username, content: message });
+      chatInput.value = '';
+    });
+
+    socket.on('chatMessage', (msg) => {
+      const messageElement = document.createElement('div');
+      messageElement.classList.add('card', 'mb-2');
+      messageElement.innerHTML = `
+        <div class="card-body">
+          <p class="card-text"><strong>User:</strong> ${msg.content}</p>
+          ${msg.adminReply ? `<p class="card-text text-primary"><strong>Admin:</strong> ${msg.adminReply}</p>` : ''}
+        </div>
+      `;
+      chatContainer.appendChild(messageElement);
+    });
+
+    if (role === 'admin') {
+      chatContainer.addEventListener('submit', (e) => {
+        e.preventDefault();
+        if (e.target.classList.contains('admin-reply-form')) {
+          const form = e.target;
+          const messageId = form.querySelector('input[name="messageId"]').value;
+          const reply = form.querySelector('input[name="reply"]').value;
+          socket.emit('adminReply', { messageId, reply });
+          form.querySelector('input[name="reply"]').value = '';
+        }
+      });
+
+      socket.on('adminReply', (msg) => {
+        const messageElement = document.createElement('div');
+        messageElement.classList.add('card', 'mb-2');
+        messageElement.innerHTML = `
+          <div class="card-body">
+            <p class="card-text text-primary"><strong>Admin:</strong> ${msg.adminReply}</p>
+          </div>
+        `;
+        chatContainer.appendChild(messageElement);
+      });
+    }
+  </script>
 </body>
 </html>
