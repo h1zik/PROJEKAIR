@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= product.name %> - Details</title>
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+      <!-- Include Navigation Bar -->
+  <%- include('../navBar') %>
+
+  <div class="container mt-5">
+    <h1 class="mb-4"><%= product.name %></h1>
+    <div class="card mb-4">
+      <div class="card-body">
+        <p class="card-text"><%= product.description %></p>
+        <p class="card-text"><strong>Price:</strong> $<%= product.price %></p>
+      </div>
+    </div>
+    
+    <h2 class="mb-4">Reviews</h2>
+    <ul class="list-group mb-4">
+      <% product.Reviews.forEach(review => { %>
+        <li class="list-group-item">
+          <strong><%= review.User.username %>:</strong> <%= review.rating %> stars
+          <p><%= review.review %></p>
+          <small class="text-muted">Posted on <%= new Date(review.createdAt).toLocaleDateString() %></small>
+        </li>
+      <% }) %>
+    </ul>
+    
+    <h2 class="mb-4">Submit a Review</h2>
+    <form action="/reviews" method="POST">
+      <input type="hidden" name="productId" value="<%= product.id %>">
+      <div class="form-group">
+        <label for="rating">Rating:</label>
+        <select class="form-control" name="rating" id="rating" required>
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="review">Review:</label>
+        <textarea class="form-control" name="review" id="review" rows="4" required></textarea>
+      </div>
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+  </div>
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

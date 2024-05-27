@@ -46,7 +46,7 @@ passport.deserializeUser(async (id, done) => {
 });
 
 exports.login = passport.authenticate('local', {
-  successRedirect: '/dashboard',
+  successRedirect: '/catalog',
   failureRedirect: '/login',
   failureFlash: true
 });
@@ -56,4 +56,14 @@ exports.logout = (req, res) => {
   req.logout(() => {
     res.redirect('/login');
   });
-}; 
+};
+
+// Render login page
+exports.getLoginPage = (req, res) => {
+  res.render('login');
+};
+
+// Render register page
+exports.getRegisterPage = (req, res) => {
+  res.render('register');
+};
