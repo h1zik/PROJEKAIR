@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manage Subscriptions</title>
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+  <div class="container mt-5">
+    <h1>Manage Subscriptions</h1>
+    <div class="list-group">
+      <% subscriptions.forEach(subscription => { %>
+        <div class="list-group-item mb-3">
+          <h5 class="mb-1">Subscription for <%= subscription.Product.name %> by <%= subscription.User.username %></h5>
+          <p class="mb-1">Status: <%= subscription.status %></p>
+          <p class="mb-1">Start Date: <%= subscription.startDate.toDateString() %></p>
+          <p class="mb-1">End Date: <%= new Date(subscription.endDate).toDateString() %></p>
+          <form action="/admin/manage-subscriptions/update/<%= subscription.id %>" method="POST" class="mt-2">
+            <div class="form-group">
+              <label for="status">Status</label>
+              <select class="form-control" id="status" name="status" required>
+                <option value="active" <%= subscription.status === 'active' ? 'selected' : '' %>>Active</option>
+                <option value="cancelled" <%= subscription.status === 'cancelled' ? 'selected' : '' %>>Cancelled</option>
+                <option value="completed" <%= subscription.status === 'completed' ? 'completed' : '' %>>Completed</option>
+              </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Update Status</button>
+          </form>
+        </div>
+      <% }) %>
+    </div>
+  </div>
+</body>
+</html>

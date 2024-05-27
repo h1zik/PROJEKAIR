@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manage Users</title>
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+  <div class="container mt-5">
+    <h1>Manage Users</h1>
+    <div class="list-group">
+      <% users.forEach(user => { %>
+        <div class="list-group-item mb-3">
+          <h5 class="mb-1"><%= user.username %></h5>
+          <p class="mb-1">Email: <%= user.email %></p>
+          <form action="/admin/manage-users/delete/<%= user.id %>" method="POST" class="mt-2">
+            <button type="submit" class="btn btn-danger">Delete User</button>
+          </form>
+        </div>
+      <% }) %>
+    </div>
+  </div>
+</body>
+</html>
